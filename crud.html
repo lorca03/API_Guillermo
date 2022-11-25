@@ -16,18 +16,8 @@
     class="m-0 vh-100 row justify-content-center align-items-center bg-light"
   >
     <div class="col-3 p-5" style="border: 1px solid black">
-      <form>
-        <div class="mb-3">
-          <label for="exampleInputName1" class="form-label">Name</label>
-          <input
-            required
-            type="text"
-            id="nombre"
-            class="form-control"
-            id="exampleInputName1"
-            aria-describedby="emailHelp"
-          />
-        </div>
+      <form action="http://localhost:8443/api/autenticar/" method="post" name="user_form">
+        
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label"
             >Email address</label
@@ -39,6 +29,7 @@
             class="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
+            pattern="[^ @]*@[^ @]*" placeholder="Introduce un em@il:"
           />
         </div>
         <div class="mb-3">
@@ -50,18 +41,7 @@
             id="password"
             class="form-control"
             id="exampleInputPassword1"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="exampleInputPassword1" class="form-label"
-            >Confirm Password</label
-          >
-          <input
-            type="password"
-            min="8"
-            id="confirmar"
-            class="form-control"
-            id="exampleInputPassword1"
+            placeholder="Introduce tu contraseña:"
           />
         </div>
         <button
@@ -70,7 +50,7 @@
           id="añadirUsuario"
           class="btn btn-primary"
         >
-          Añadir usuario
+          Iniciar sesion
         </button>
       </form>
     </div>

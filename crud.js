@@ -1,6 +1,6 @@
 
 
-const añadir = document.getElementById("añadirUsuario");
+/*const añadir = document.getElementById("añadirUsuario");
 
 let usuario={
     name:document.getElementById("nombre"),
@@ -21,4 +21,4 @@ async function peticionAñadir() {
 }
 
 // eslint-disable-next-line no-unused-vars
-añadir.addEventListener("click", ()=>peticionAñadir());
+añadir.addEventListener("click", ()=>peticionAñadir());*/
