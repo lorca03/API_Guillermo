@@ -94,10 +94,10 @@ app.post("/api/login/", (req, res, next) => {
     email: req.body.email,
     password: md5(req.body.password),
   };
-  var sql = "select * from user where password = " + data.password;
+  var sql = `select * from user where password = ${data.password}`;
   var params = [data.email, data.password];
   db.get(sql, params, (err, row) => {
-    if (row.length==0) {
+    if (err) {
         res.status(400).json({ "El usuario no existe": err.message });
       return;
     }
