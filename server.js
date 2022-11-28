@@ -90,19 +90,16 @@ app.post("/api/login/", (req, res, next) => {
     res.status(400).json({ error: errors.join(",") });
     return;
   }
-  var data = {
-    email: req.body.email,
-    password: md5(req.body.password),
-  };
-  var sql = `select * from user where password = ${data.password}`;
-  var params = [data.email, data.password];
-  db.get(sql, params, (err, row) => {
+  var sql = "SELECT * FROM user WHERE email=? and password=? ";
+  var params = [req.body.email, md5(req.body.password)];
+  db.get(sql,params, (err, row) => {
     if (err) {
-        res.status(400).json({ "El usuario no existe": err.message });
-      return;
+      res.status(400).json({ Error: err.message });
     }
     res.json({
       message: "El usuario existe",
+      data:''+ row,
+      params,
     });
   });
 });
