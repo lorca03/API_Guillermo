@@ -92,13 +92,13 @@ app.post("/api/login/", (req, res, next) => {
   }
   var sql = "SELECT * FROM user WHERE email=? and password=? ";
   var params = [req.body.email, md5(req.body.password)];
-  db.get(sql,params, (err, row) => {
+  db.get(sql,params,(err, user) => {
     if (err) {
       res.status(400).json({ Error: err.message });
     }
     res.json({
       message: "El usuario existe",
-      data:''+ row,
+      data:''+ user,
       params,
     });
   });
