@@ -92,15 +92,21 @@ app.post("/api/login/", (req, res, next) => {
   }
   var sql = "SELECT * FROM user WHERE email=? and password=? ";
   var params = [req.body.email, md5(req.body.password)];
-  db.get(sql,params,(err, user) => {
+  db.get(sql, params, (err, user) => {
     if (err) {
       res.status(400).json({ Error: err.message });
+    } else {
+      if (user) {
+        res.json({
+          message: "Hola "+user.name + " bienvenido de nuevo",
+        });
+      }else{
+        res.json({
+          message: "Las credenciales son incorrectas",
+          params,
+        });
+      }
     }
-    res.json({
-      message: "El usuario existe",
-      data:''+ user,
-      params,
-    });
   });
 });
 app.patch("/api/user/:id", (req, res, next) => {
