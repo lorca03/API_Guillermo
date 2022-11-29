@@ -1,5 +1,5 @@
 var sqlite3 = require('sqlite3').verbose()
-var md5 = require('md5')
+var sha512 = require("js-sha512");
 
 const DBSOURCE = "db.sqlite"
 
@@ -23,10 +23,21 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             }else{
                 // Table just created, creating some rows
                 var insert = 'INSERT INTO user (name, email, password) VALUES (?,?,?)'
-                db.run(insert, ["admin","admin@example.com",md5("admin123456")])
-                db.run(insert, ["user","user@example.com",md5("user123456")])
+                db.run(insert, ["admin","admin@example.com",sha512("admin123456")])
+                db.run(insert, ["user","user@example.com",sha512("user123456")])
             }
         });  
+        db.run(`CREATE TABLE "anotaciones" (
+            "id"	INTEGER,
+            "anotacion"	TEXT NOT NULL,
+            CONSTRAINT "fk_anotaciones_user" FOREIGN KEY("id") REFERENCES user,
+            PRIMARY KEY("id")
+        )`,
+        (err) => {
+            if (err) {
+                console.log(err)
+            }
+        });
     }
 });
 

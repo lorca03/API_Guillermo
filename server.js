@@ -1,20 +1,24 @@
 // Crear aplicación express
 var express = require("express");
+var fs = require('fs');
+var https = require('https');
 var app = express();
 var db = require("./database.js");
-var md5 = require("md5");
+var sha512 = require("js-sha512");
 
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // Puerto del servidor
-var HTTP_PORT = 8000;
+const PUERTO = 8080;
 // Iniciar servidor
-app.listen(HTTP_PORT, () => {
-  console.log(
-    "Servidor en ejecución en el puerto %PORT%".replace("%PORT%", HTTP_PORT)
-  );
+https.createServer({
+  cert: fs.readFileSync('mi_certificado.crt'),
+  key: fs.readFileSync('mi_certificado.key')
+},app).listen(PUERTO, function(){
+ console.log('Servidor https correindo en el puerto 443');
 });
+
 // Punto final raíz
 app.get("/", (req, res, next) => {
   res.json({ message: "success" });
@@ -56,13 +60,17 @@ app.post("/api/user/", (req, res, next) => {
   if (!req.body.email) {
     errors.push("No email specified");
   }
+  if (!req.body.name) {
+    errors.push("No name specified");
+  }
   if (errors.length) {
     res.status(400).json({ error: errors.join(",") });
     return;
   }
   var data = {
+    name: req.body.name,
     email: req.body.email,
-    password: md5(req.body.password),
+    password: sha512(req.body.password),
   };
   var sql = "INSERT INTO user (name, email, password) VALUES (?,?,?)";
   var params = [data.name, data.email, data.password];
@@ -91,7 +99,7 @@ app.post("/api/login/", (req, res, next) => {
     return;
   }
   var sql = "SELECT * FROM user WHERE email=? and password=? ";
-  var params = [req.body.email, md5(req.body.password)];
+  var params = [req.body.email, sha512(req.body.password)];
   db.get(sql, params, (err, user) => {
     if (err) {
       res.status(400).json({ Error: err.message });
@@ -102,8 +110,7 @@ app.post("/api/login/", (req, res, next) => {
         });
       }else{
         res.json({
-          message: "Las credenciales son incorrectas",
-          params,
+          message: "Las credenciales de usuario son incorrectas"
         });
       }
     }
@@ -113,7 +120,7 @@ app.patch("/api/user/:id", (req, res, next) => {
   var data = {
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password ? md5(req.body.password) : null,
+    password: req.body.password ? sha512(req.body.password) : null,
   };
   db.run(
     `UPDATE user set 
