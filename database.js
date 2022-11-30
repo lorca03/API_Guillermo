@@ -26,13 +26,12 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
                 db.run(insert, ["admin","admin@example.com",sha512("admin123456")])
                 db.run(insert, ["user","user@example.com",sha512("user123456")])
             }
-        });  
+        }); 
         db.run(`CREATE TABLE "anotaciones" (
-            "id"	INTEGER,
+            "id" INTEGER,
             "anotacion"	TEXT NOT NULL,
             CONSTRAINT "fk_anotaciones_user" FOREIGN KEY("id") REFERENCES user,
-            PRIMARY KEY("id")
-        )`,
+            PRIMARY KEY("id"))`,
         (err) => {
             if (err) {
                 console.log(err)
