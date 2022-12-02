@@ -27,17 +27,21 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
                 db.run(insert, ["user","user@example.com",sha512("user123456")])
             }
         }); 
+        console.log('Creando tabla anotaciones.')
         db.run(`CREATE TABLE "anotaciones" (
-            "id" INTEGER,
+            "email" text,
             "anotacion"	TEXT NOT NULL,
-            CONSTRAINT "fk_anotaciones_user" FOREIGN KEY("id") REFERENCES user,
-            PRIMARY KEY("id"))`,
+            CONSTRAINT "fk_anotaciones_email" FOREIGN KEY("email") REFERENCES user,
+            PRIMARY KEY(email,anotacion))`,
         (err) => {
             if (err) {
-                console.log(err)
+            }else{
+                var insert2 = 'INSERT INTO anotaciones (email, anotacion) VALUES (?,?)'
+                db.run(insert2, ["user@example.com","Hola soy user.Primera anotacion"])
             }
         });
     }
+    
 });
 
 
