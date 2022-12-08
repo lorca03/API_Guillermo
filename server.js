@@ -1,7 +1,7 @@
 // Crear aplicación express
 var express = require("express");
-var fs = require('fs');
-var https = require('https');
+var fs = require("fs");
+var https = require("https");
 var app = express();
 var db = require("./database.js");
 var sha512 = require("js-sha512");
@@ -12,12 +12,17 @@ app.use(bodyParser.json());
 // Puerto del servidor
 const PUERTO = 8080;
 // Iniciar servidor
-https.createServer({
-  cert: fs.readFileSync('mi_certificado.crt'),
-  key: fs.readFileSync('mi_certificado.key')
-},app).listen(PUERTO, function(){
- console.log('Servidor https correindo en el puerto 443');
-});
+https
+  .createServer(
+    {
+      cert: fs.readFileSync("mi_certificado.crt"),
+      key: fs.readFileSync("mi_certificado.key"),
+    },
+    app
+  )
+  .listen(PUERTO, function () {
+    console.log("Servidor https correindo en el puerto 443");
+  });
 
 // Punto final raíz
 app.get("/", (req, res, next) => {
@@ -34,6 +39,20 @@ app.get("/api/users", (req, res, next) => {
     }
     res.json({
       message: "success",
+      data: rows,
+    });
+  });
+});
+app.get("/api/anotaciones", (req, res, next) => {
+  var sql = "select * from anotaciones";
+  var params = [];
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: "Todas las anotaciones",
       data: rows,
     });
   });
@@ -86,6 +105,35 @@ app.post("/api/user/", (req, res, next) => {
     });
   });
 });
+app.post("/api/anotacion/", (req, res, next) => {
+  var errors = [];
+  if (!req.body.email) {
+    errors.push("No email specified");
+  }
+  if (!req.body.anotacion) {
+    errors.push("No anotacion specified");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
+  var data = {
+    email: req.body.email,
+    anotacion: req.body.anotacion,
+  };
+  var sql = "INSERT INTO anotaciones (email, anotacion) VALUES (?,?)";
+  var params = [data.email, data.anotacion];
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: "Gracias por crear una anotacion",
+      data: data,
+    });
+  });
+});
 app.post("/api/login/", (req, res, next) => {
   var errors = [];
   if (!req.body.password) {
@@ -106,11 +154,11 @@ app.post("/api/login/", (req, res, next) => {
     } else {
       if (user) {
         res.json({
-          message: "Hola "+user.name + " bienvenido de nuevo",
+          message: "Hola " + user.name + " bienvenido de nuevo",
         });
-      }else{
+      } else {
         res.json({
-          message: "Las credenciales de usuario son incorrectas"
+          message: "Las credenciales de usuario son incorrectas",
         });
       }
     }
