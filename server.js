@@ -43,6 +43,19 @@ app.get("/api/users", (req, res, next) => {
     });
   });
 });
+app.get("/api/emails", (req, res, next) => {
+  var sql = "select email from user";
+  var params = [];
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      data: rows,
+    });
+  });
+});
 app.get("/api/anotaciones", (req, res, next) => {
   var sql = "select * from anotaciones";
   var params = [];
